@@ -2,12 +2,12 @@ import mongoose from "mongoose";
 const {Schema} = mongoose
 
 const userSchema = new Schema({
-   name : {
+    userName : {
     type: String,
     required: true
    },
 
-   email : {
+    email : {
     type: String,
     required: true,
     unique: true,
@@ -20,8 +20,8 @@ const userSchema = new Schema({
 
    role: {
     type: String,
-    enum: ["student", "teacher",],
-    default: "student"
+    enum: ["user", "admin",],
+    default: "user"
    }
 })
 

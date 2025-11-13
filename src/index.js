@@ -7,7 +7,7 @@ import userRouter from "./routes/user.route.js"
 
 app.use(express.json())
 
-app.use("/user",userRouter)
+app.use("/api/v1/user", userRouter)
 
 
 
