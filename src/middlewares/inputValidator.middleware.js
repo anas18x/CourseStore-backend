@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { ErrorResponse } from '../utils/common/responseHandler.js';
+import { StatusCodes } from 'http-status-codes';
 
 
 export const SignUpinputValidator = (req,res,next) => {
@@ -18,9 +20,7 @@ export const SignUpinputValidator = (req,res,next) => {
 
    const parsedData = requiredBody.safeParse(req.body)
    if(!parsedData.success){
-    return res.status(400).json({
-        error: parsedData.error.format()
-    })
+   ErrorResponse(res, parsedData.error.format(), StatusCodes.NOT_ACCEPTABLE);
    } 
 
    req.validatedData = parsedData.data;
@@ -43,9 +43,7 @@ export const SignIninputValidator = (req,res,next) => {
 
    const parsedData = requiredBody.safeParse(req.body)
    if(!parsedData.success){
-    return res.status(400).json({
-        error:  parsedData.error.format()
-    })
+    ErrorResponse(res, parsedData.error.format(), StatusCodes.NOT_ACCEPTABLE);
    }
 
    req.validatedData = parsedData.data;

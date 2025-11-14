@@ -1,5 +1,8 @@
 import jwt from "jsonwebtoken"
-import { ENV } from "../config/ENV.config";
+import { ENV } from "../config/ENV.config.js";
+import { ErrorResponse, SuccessResponse } from "../utils/common/responseHandler.js";
+import { StatusCodes } from "http-status-codes";
+import AppError from "../utils/error/AppError.js";
 
 const tokenIsValid = (req,res,next) => {
    const token = req.headers.token;
@@ -10,9 +13,6 @@ const tokenIsValid = (req,res,next) => {
         req.token =  JWTverification.id
         next()
     } catch (error){
-        return res.status(401).json({
-            msg:"invalid credentials"
-        })
+       throw new AppError("invalid token", StatusCodes.UNAUTHORIZED);
     }
 }
-  

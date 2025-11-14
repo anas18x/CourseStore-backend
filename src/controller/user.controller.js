@@ -1,9 +1,7 @@
-import { User } from "../models/User.models.js"
-import bcrypt from "bcrypt"
-import { ENV } from "../config/ENV.config.js"
-import jwt from "jsonwebtoken"
-import { signUpService } from "../service/auth.service.js"
-import { signInService } from "../service/auth.service.js"
+import { ErrorResponse, SuccessResponse } from "../utils/common/responseHandler.js"
+import { StatusCodes } from "http-status-codes"
+import  AppError from "../utils/error/AppError.js"
+import { Auth } from "../service/index.js"
 
 /**
  * User SignUp Controller
@@ -31,14 +29,10 @@ export async function UserSignUp(req, res) {
   const { userName, email, password, role } = req.validatedData
 
   try {
-    await signUpService(userName,email,password,role)
-    return res.status(200).json({
-        msg:"signed up"
-    })
+    await Auth.signUpService(userName,email,password,role)
+    SuccessResponse(res, null, "SignedUp successfully", StatusCodes.CREATED)
   } catch (error) {
-    return res.status(500).json({
-        msg:"user already exists"
-    })
+    throw new AppError("user already exists", StatusCodes.CONFLICT);
   }
 }
 
@@ -82,25 +76,10 @@ export async function UserSignIn(req, res) {
 
   try{
 
-    const token = await signInService(email,password)
-    return res.status(200).json({token})
+    const token = await Auth.signInService(email,password)
+    SuccessResponse(res,{token},"logged in successfully",StatusCodes.OK)
    
   } catch (error) {
-    if(error.message === "user not found"){
-        return res.status(401).json({
-            msg:"user not found"
-        })
-    }
-
-    if(error.message === "invalid credentials"){
-        return res.status(401).json({
-            msg:"invalid credentials"
-        })
-    }
-
-    return res.status(500).json({
-        msg:"something went wrong"
-    })
-  }
-  
+     throw new AppError(error.message, error.statusCode);  
+  }  
 }
