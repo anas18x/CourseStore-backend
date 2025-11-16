@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes"
 import  AppError from "../utils/error/AppError.js"
 import { Auth } from "../service/index.js"
 import { generateRefreshToken } from "../utils/common/generateToken.js"
+import { ENV } from "../config/ENV.config.js"
 
 /**
  * User SignUp Controller
@@ -83,7 +84,13 @@ export async function UserSignIn(req, res) {
       secure: true,
       sameSite: "Strict",
     });
-    SuccessResponse(res,{accessToken},"logged in successfully",StatusCodes.OK)
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+    });
+
+    SuccessResponse(res,null,"logged in successfully",StatusCodes.OK)
 
   } catch (error) {
      throw new AppError(error.message, error.statusCode);  
@@ -97,6 +104,7 @@ export async function UserLogOut(req,res){
   try {
     await Auth.logOutService(userId)
     res.clearCookie("refreshToken");
+    res.clearCookie("accessToken");
     SuccessResponse(res,null,"logged out successfully",StatusCodes.OK)
   } catch (error) {
     throw new AppError("could not logout", StatusCodes.INTERNAL_SERVER_ERROR);
@@ -114,7 +122,12 @@ export async function RefreshAccessToken(req,res){
   try {
     const decoded = await Auth.refreshTokenService(refreshToken)
     const newAccessToken = generateRefreshToken({userId: decoded.userId, role: decoded.role}, ENV.JWT_SECRET)
-    SuccessResponse(res, {newAccessToken}, "new access token generated", StatusCodes.OK)
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+    });
+    SuccessResponse(res,null, "new access token generated", StatusCodes.OK)
   } catch (error) {
     ErrorResponse(res, error.message, error.statusCode);
   }

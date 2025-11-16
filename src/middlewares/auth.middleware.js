@@ -6,7 +6,7 @@ import AppError from "../utils/error/AppError.js";
 
 
 export const verifyToken = (req,res,next) => {
-   const accessToken = req.headers['accesstoken']
+   const accessToken = req.cookies.accessToken;
    if(!accessToken) ErrorResponse(res, "token missing", StatusCodes.UNAUTHORIZED);
 
     try{
