@@ -51,3 +51,21 @@ export const SignIninputValidator = (req,res,next) => {
 }
 
 
+
+export const validateCourseInput = (req,res,next) => {
+   const requiredBody = z.object({
+      title: z.string().min(3).max(100),
+      imageURL: z.string().url("Invalid URL format"),
+      description: z.string().min(10).max(1000),
+      price: z.number().min(0),
+   })
+
+   const parsedData = requiredBody.safeParse(req.body)
+   if(!parsedData.success){
+    ErrorResponse(res, parsedData.error.format(), StatusCodes.NOT_ACCEPTABLE);
+   }
+
+   req.validatedData = parsedData.data
+   next()
+}
+

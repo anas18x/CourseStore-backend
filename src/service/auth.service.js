@@ -20,7 +20,6 @@ export const signUpService = async (userName, email , password, role) => {
 
 
 
-
 export const signInService = async (email, password) => {
      const findUser = await UserModel.User.findOne({email})
      if(!findUser){
