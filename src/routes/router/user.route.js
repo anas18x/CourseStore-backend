@@ -1,18 +1,17 @@
-import { Router } from "express";
+import Router from "express";
 const userRouter = Router()
-import { AuthMiddleware, InputValidatorMiddleware } from "../../middlewares/index.js";
-import { UserController } from "../../controller/index.js";
 
 
 
-userRouter.post("/register", InputValidatorMiddleware.SignUpinputValidator, UserController.UserSignUp)
+userRouter.get("/my-courses",)
 
-userRouter.post("/login", InputValidatorMiddleware.SignIninputValidator, UserController.UserSignIn)
+userRouter.get("/get-all-courses", AuthMiddleware.verifyToken ,CourseController.GetAllCourses)
 
-userRouter.post("/logout", AuthMiddleware.verifyToken, UserController.UserLogOut)
+userRouter.get("/get-course/:courseId", AuthMiddleware.verifyToken ,CourseController.GetCourseById)
 
-userRouter.post("/refresh-token", UserController.RefreshAccessToken)
+userRouter.get("/purchase-course/:courseId", AuthMiddleware.verifyToken ,UserController.PurchaseCourse)
 
+userRouter.get("/cart", AuthMiddleware.verifyToken ,UserController.GetUserCart)
 
 export default userRouter
 
