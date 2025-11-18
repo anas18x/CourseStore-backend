@@ -11,7 +11,7 @@ export const verifyToken = (req,res,next) => {
 
     try{
        const JWTverification = jwt.verify(accessToken,ENV.JWT_SECRET) 
-       req.token =  JWTverification
+       req.userInfo =  JWTverification
        next()
     } catch (error){
        throw new AppError("invalid token", StatusCodes.UNAUTHORIZED);

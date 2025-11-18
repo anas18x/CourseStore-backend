@@ -1,4 +1,4 @@
-import Router from "express";
+import {Router} from "express";
 const adminRouter = Router()
 import { AuthMiddleware, InputValidatorMiddleware } from "../../middlewares/index.js";
 import { AdminController } from "../../controller/index.js";

@@ -6,6 +6,7 @@ import { ErrorMiddleware } from "./middlewares/index.js";
 import APIRoutes from "./routes/index.js";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
+import multer from "multer";
 
 
 const limiter = rateLimit({
