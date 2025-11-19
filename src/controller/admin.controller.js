@@ -24,6 +24,9 @@ export async function PreviewCourseById(req,res){
     try {
     const courseId = req.params.courseId;
     const course = await CourseService.getCourseByIdService(courseId)
+    if(!course){
+      throw new AppError("course not found", StatusCodes.NOT_FOUND);
+    }
     SuccessResponse(res,{course},"course fetched successfully",StatusCodes.OK)
     } catch (error) {
       throw new AppError(error.message, error.statusCode)
@@ -85,7 +88,9 @@ export async function UpdateCourse(req,res){
     
     const imageFilePath = req.files?.image?.[0]?.path;
     if (imageFilePath) {
-      const imageURL = await CloudnaryService.uploadImage(imageFilePath);
+      const cloudnaryRes = await CloudnaryService.uploadImage(imageFilePath);
+      var imageURL = cloudnaryRes.secure_url
+      var publicId = cloudnaryRes.public_id;
       updateData.imageURL = imageURL;
     }
     
@@ -93,6 +98,14 @@ export async function UpdateCourse(req,res){
     SuccessResponse(res,null,"course updated successfully",StatusCodes.OK)
 
   } catch (error) {
+    if (publicId) {
+        try {
+            const uploadResult = await CloudnaryService.uploader.destroy(publicId);
+            console.log("Deleted from Cloudinary:", uploadResult);
+        } catch (deleteErr) {
+            console.log("Cloudinary deletion failed:", deleteErr);
+        }
+    }
     throw new AppError(error.message, error.statusCode)
   }
 }
