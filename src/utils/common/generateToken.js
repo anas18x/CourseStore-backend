@@ -15,9 +15,9 @@ export const generateAccessToken = (payload, secretKey) => {
 
 
 export const generateRefreshToken =  (payload, secretKey) => {
-   const {userId, userName, role} = payload
+   const {userId} = payload
    try {
-     const refreshToken = jwt.sign({userId, userName, role}, secretKey, {expiresIn: "10d"})
+     const refreshToken = jwt.sign({userId}, secretKey, {expiresIn: "10d"})
      return refreshToken
 
    } catch (error) {

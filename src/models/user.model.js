@@ -15,11 +15,6 @@ const userSchema = new Schema({
     default: "user"
    },
 
-   refreshToken: {
-    type: String,
-    default: null
-   }
-   
 },{timestamps: true})
 
 export const User = mongoose.model("user",userSchema)
