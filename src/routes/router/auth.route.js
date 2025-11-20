@@ -11,7 +11,13 @@ authRouter.post("/login", InputValidatorMiddleware.SignIninputValidator, AuthCon
 
 authRouter.post("/logout", AuthMiddleware.verifyToken, AuthController.handleLogOut)
 
-authRouter.post("/refresh-token", AuthController.RefreshAccessToken)
+authRouter.post("/refresh-token", AuthController.Refresh_AccessToken)
+
+authRouter.post("/reset-password",
+      AuthMiddleware.verifyToken, 
+      InputValidatorMiddleware.ResetPasswordInputValidator, 
+      AuthController.ResetPassword)
+
 
 
 export default authRouter

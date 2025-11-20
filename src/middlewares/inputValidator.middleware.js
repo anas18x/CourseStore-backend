@@ -84,3 +84,31 @@ export const validateUpdateInput = (req,res,next) => {
    req.validatedData = parsedData.data
    next()
 }
+
+
+
+export const ResetPasswordInputValidator = (req,res,next) => {
+   const requiredBody = z.object({
+    CurrentPass: z.string()
+    .min(8, "Password must be at least 8 characters long")
+    .max(20, "Password must not exceed 20 characters")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number"),
+      
+    NewPass: z.string()
+    .min(8, "Password must be at least 8 characters long")
+    .max(20, "Password must not exceed 20 characters")
+    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    .regex(/[0-9]/, "Password must contain at least one number"),
+   })
+
+   const parsedData = requiredBody.safeParse(req.body)
+   if(!parsedData){
+      ErrorResponse(res,parsedData.error.format(),StatusCodes.UNAUTHORIZED)
+   }
+
+   req.validatedData = parsedData.data;
+   next()
+}

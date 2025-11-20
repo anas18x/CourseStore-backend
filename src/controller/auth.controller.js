@@ -112,7 +112,7 @@ export async function handleLogOut(req,res){
 
 
 
-export async function RefreshAccessToken(req,res){
+export async function Refresh_AccessToken(req,res){
   const refreshToken = req.cookies.refreshToken;
   if(!refreshToken){
     return ErrorResponse(res, "refresh token missing", StatusCodes.UNAUTHORIZED);
@@ -133,4 +133,17 @@ export async function RefreshAccessToken(req,res){
   } catch (error) {
     ErrorResponse(res, error.message, error.statusCode);
   }
+}
+
+
+
+export async function ResetPassword(req,res){
+ try {
+   const userId = req.userInfo.userId; 
+   const {CurrentPass , NewPass} = req.body;
+   await Auth.ResetPassword(userId,CurrentPass,NewPass)
+   SuccessResponse(res,null,"password reset successful",StatusCodes.OK)
+ } catch (error) {
+    throw new AppError(error.message, error.statusCode);
+ }
 }

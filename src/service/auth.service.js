@@ -41,3 +41,19 @@ export const signInService = async (email, password) => {
 }
 
 
+
+export const ResetPassword = async (userId,currentPass, newPass) => {
+  const userInfo = await UserModel.User.findById(userId)
+  if (!userInfo) {
+    throw new AppError("User not found", StatusCodes.NOT_FOUND);
+  }
+
+  const passwordMatched = await bcrypt.compare(currentPass, userInfo.password)
+  if(passwordMatched){
+   await UserModel.User.findByIdAndUpdate(userId, {
+      password: await bcrypt.hash(newPass, 5)
+    })
+  } else {
+    throw new AppError("current password is incorrect", StatusCodes.UNAUTHORIZED);
+  }
+}
