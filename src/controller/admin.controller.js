@@ -5,6 +5,18 @@ import AppError from "../utils/error/AppError.js";
 import { CloudnaryService } from "../service/index.js";
 import { CourseModel } from "../models/index.js";
 
+/**
+ * Preview All Courses
+ *
+ * Returns a list of courses visible to the requesting admin/user.
+ * - Requires authentication; expects `req.userInfo.userId` from Auth middleware.
+ * - Responds with 200 and `{ courses }` on success.
+ * - Throws 404 if no courses are available.
+ *
+ * @param {import('express').Request & { userInfo: { userId: string } }} req - Request with authenticated user info
+ * @param {import('express').Response} res - Express response
+ * @returns {Promise<void>}
+ */
 export async function PreviewAllCourses(req,res){
     const {userId} = req.userInfo
     try {
@@ -20,6 +32,17 @@ export async function PreviewAllCourses(req,res){
 
 
 
+/**
+ * Preview Course By Id
+ *
+ * Returns details for a single course identified by `:courseId`.
+ * - Responds with 200 and `{ course }` on success.
+ * - Throws 404 if course is not found.
+ *
+ * @param {import('express').Request & { params: { courseId: string } }} req - Request with path parameter `courseId`
+ * @param {import('express').Response} res - Express response
+ * @returns {Promise<void>}
+ */
 export async function PreviewCourseById(req,res){
     try {
     const courseId = req.params.courseId;
@@ -35,6 +58,19 @@ export async function PreviewCourseById(req,res){
 
 
 
+/**
+ * Add Course
+ *
+ * Creates a new course. Requires an uploaded image file and validated body fields.
+ * - Requires authentication; uses `req.userInfo.userId` as creatorId.
+ * - Expects `req.validatedData = { title, description, price }` from validator.
+ * - Expects a file at `req.files.image[0].path`.
+ * - Responds with 201 on success.
+ *
+ * @param {import('express').Request & { userInfo: { userId: string }, validatedData: { title: string, description: string, price: number }, files?: { image?: Array<{ path: string }> } }} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 export async function AddCourse(req,res){
     try {
     const {userId} = req.userInfo
@@ -65,6 +101,18 @@ export async function AddCourse(req,res){
 
 
 
+/**
+ * Update Course
+ *
+ * Updates course fields and optionally replaces the course image.
+ * - Ensures the course belongs to the authenticated admin (`creatorId === userId`).
+ * - Accepts partial updates: `{ title?, description?, price?, image? }`.
+ * - Responds with 200 on success.
+ *
+ * @param {import('express').Request & { params: { courseId: string }, userInfo: { userId: string }, validatedData: { title?: string, description?: string, price?: number }, files?: { image?: Array<{ path: string }> } }} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 export async function UpdateCourse(req,res){
   try{
     const courseId = req.params.courseId
@@ -112,6 +160,18 @@ export async function UpdateCourse(req,res){
 
 
 export async function DeleteCourse(req,res,next){
+  /**
+   * Delete Course
+   *
+   * Deletes a course owned by the authenticated admin.
+   * - Requires `req.params.courseId` and `req.userInfo.userId`.
+   * - Responds with 200 on success.
+   *
+   * @param {import('express').Request & { params: { courseId: string }, userInfo: { userId: string } }} req
+   * @param {import('express').Response} res
+   * @param {import('express').NextFunction} next
+   * @returns {Promise<void>}
+   */
   try{
     const courseId = req.params.courseId
     const {userId} = req.userInfo

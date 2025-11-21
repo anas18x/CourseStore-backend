@@ -100,6 +100,17 @@ export async function handleSignIn(req, res) {
 
 
 
+/**
+ * Log Out
+ *
+ * Clears authentication cookies to terminate the session.
+ * - Requires the user to be authenticated (middleware adds cookies to clear).
+ * - Responds with 200 on success.
+ *
+ * @param {import('express').Request} req - Express request
+ * @param {import('express').Response} res - Express response
+ * @returns {Promise<void>}
+ */
 export async function handleLogOut(req,res){
   try {
     res.clearCookie("refreshToken");
@@ -112,6 +123,18 @@ export async function handleLogOut(req,res){
 
 
 
+/**
+ * Refresh Access Token
+ *
+ * Issues a new short-lived access token using a valid refresh token found in cookies.
+ * - Expects cookie `refreshToken` to be present.
+ * - Responds with 200 and sets a new `accessToken` cookie.
+ * - Responds with 401 if refresh token is missing or invalid.
+ *
+ * @param {import('express').Request} req - Express request with cookies
+ * @param {import('express').Response} res - Express response
+ * @returns {Promise<void>}
+ */
 export async function Refresh_AccessToken(req,res){
   const refreshToken = req.cookies.refreshToken;
   if(!refreshToken){
@@ -137,6 +160,18 @@ export async function Refresh_AccessToken(req,res){
 
 
 
+/**
+ * Reset Password
+ *
+ * Resets the authenticated user's password.
+ * - Requires valid auth middleware to populate `req.userInfo.userId`.
+ * - Expects body fields `{ CurrentPass: string, NewPass: string }`.
+ * - Responds with 200 on successful reset.
+ *
+ * @param {import('express').Request & { userInfo: { userId: string } }} req - Request with authenticated user info
+ * @param {import('express').Response} res - Express response
+ * @returns {Promise<void>}
+ */
 export async function ResetPassword(req,res){
  try {
    const userId = req.userInfo.userId; 
