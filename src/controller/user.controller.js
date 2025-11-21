@@ -1,8 +1,8 @@
-import { get } from "mongoose";
-import { getAllCoursesService } from "../service/course.service";
-import { SuccessResponse } from "../utils/common/responseHandler";
-import AppError from "../utils/error/AppError";
-import { UserService } from "../service";
+import { SuccessResponse } from "../utils/common/responseHandler.js";
+import AppError from "../utils/error/AppError.js";
+import { UserService } from "../service/index.js";
+import { PurchaseModel } from "../models/index.js";
+import { StatusCodes } from "http-status-codes";
 
 
 /**
@@ -17,7 +17,16 @@ import { UserService } from "../service";
  * @returns {Promise<void>}
  */
 export async function GetMyCourses(req, res) {
-  
+    try {
+        const userId = req.userInfo.userId;
+        const myCourses = await UserService.getMyCourses(userId);
+        if(!myCourses || myCourses.length === 0){
+            throw new AppError("no courses found", StatusCodes.NOT_FOUND);
+        }
+        SuccessResponse(res, { myCourses }, "successfully fetched my courses", StatusCodes.OK);
+    } catch (error) {
+        throw new AppError(error.message, error.statusCode);
+    }
 }
 
 
@@ -33,8 +42,11 @@ export async function GetMyCourses(req, res) {
  */
 export async function GetAllCourses(req, res) {
     try {
-        await UserService.getAllCourses();
-        SuccessResponse(res, null, "successfully fetched all courses", 200);
+        const courses = await UserService.getAllCourses();
+        if(!courses || courses.length === 0){
+            throw new AppError("no courses available", StatusCodes.NOT_FOUND);
+        }
+        SuccessResponse(res, { courses }, "successfully fetched all courses", StatusCodes.OK);
     } catch (error) {
         throw new AppError(error.message, error.statusCode);
     }
@@ -54,8 +66,11 @@ export async function GetAllCourses(req, res) {
 export async function GetCourseById(req, res) {
     try {
         const courseId = req.params.courseId;
-        await UserService.getCourseById(courseId);
-        SuccessResponse(res, null, " course fetched successfully", 200);
+        const course = await UserService.getCourseById(courseId);
+        if(!course){
+        throw new AppError("course not found", StatusCodes.NOT_FOUND);
+        }
+        SuccessResponse(res, { course }, " course fetched successfully", StatusCodes.OK);
     } catch (error) {
         throw new AppError(error.message, error.statusCode);
     }
@@ -74,5 +89,20 @@ export async function GetCourseById(req, res) {
  * @returns {Promise<void>}
  */
 export async function PurchaseCourse(req, res ) {
+    try {
+        const userId = req.userInfo.userId;
+        const courseId =  req.params.courseId;
+        const alreadyPurchased = await PurchaseModel.Purchase.findOne({ userId, courseId });
+        if (alreadyPurchased) {
+          throw new AppError("You already purchased this course", StatusCodes.NOT_ACCEPTABLE);
+        }
 
+        const purchase = await UserService.purchaseCourse(userId, courseId);
+        if(!purchase){
+            throw new AppError("purchase failed", StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+        SuccessResponse(res, null, "course purchased successfully", StatusCodes.OK);
+    } catch (error) {
+        throw new AppError(error.message, error.statusCode);
+    }
 }

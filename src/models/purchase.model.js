@@ -3,9 +3,9 @@ const {Schema} = mongoose
 
 
 const purchaseSchema = new Schema({
-    userId : {type: mongoose.Schema.Types.ObjectId, ref: "User", required: true},
+    userId : {type: mongoose.Schema.Types.ObjectId, ref: "user", required: true},
 
-    courseId : {type: mongoose.Schema.Types.ObjectId, ref: "Course", required: true},
+    courseId : {type: mongoose.Schema.Types.ObjectId, ref: "course", required: true},
 
 },{timestamps: true})
 

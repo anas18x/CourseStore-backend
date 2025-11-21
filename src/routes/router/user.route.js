@@ -3,14 +3,13 @@ const userRouter = Router()
 import { AuthMiddleware } from "../../middlewares/index.js";
 import { UserController } from "../../controller/index.js";
 
-
 userRouter.get("/my-courses",AuthMiddleware.verifyToken ,UserController.GetMyCourses)
 
-userRouter.get("/get-all-courses", AuthMiddleware.verifyToken ,CourseController.GetAllCourses)
+userRouter.get("/get-all-courses", AuthMiddleware.verifyToken ,UserController.GetAllCourses)
 
-userRouter.get("/get-course/:courseId", AuthMiddleware.verifyToken ,CourseController.GetCourseById)
+userRouter.post("/get-course/:courseId", AuthMiddleware.verifyToken ,UserController.GetCourseById)
 
-userRouter.get("/purchase-course/:courseId", AuthMiddleware.verifyToken ,UserController.PurchaseCourse)
+userRouter.post("/purchase-course/:courseId", AuthMiddleware.verifyToken ,UserController.PurchaseCourse)
 
 
 

@@ -159,8 +159,8 @@ export async function UpdateCourse(req,res){
 }
 
 
-export async function DeleteCourse(req,res,next){
-  /**
+
+ /**
    * Delete Course
    *
    * Deletes a course owned by the authenticated admin.
@@ -172,6 +172,8 @@ export async function DeleteCourse(req,res,next){
    * @param {import('express').NextFunction} next
    * @returns {Promise<void>}
    */
+  
+export async function DeleteCourse(req,res,next){
   try{
     const courseId = req.params.courseId
     const {userId} = req.userInfo
